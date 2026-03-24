@@ -531,5 +531,15 @@
     "local_file": "",
     "description": "통장사본 (원화 또는 외화)",
     "is_group": true
+  },
+  {
+    "name": "주업종코드",
+    "aliases": [
+      "주업종코드"
+    ],
+    "notion_url": "https://www.notion.so/32c29436cbac80fe954dc5629f7b9fe2",
+    "notion_page_id": "32c29436cbac80fe954dc5629f7b9fe2",
+    "local_file": "주업종코드.pdf",
+    "description": "주업종코드"
   }
 ]
