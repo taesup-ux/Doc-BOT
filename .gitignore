@@ -1,0 +1,26 @@
+# 환경변수 — 절대 커밋 금지
+.env
+**/.env
+
+# 가상환경
+.venv/
+**/.venv/
+
+# Python 캐시
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# 로컬 파일 캐시
+**/knowledge/files/
+
+# 스크린샷
+*.png
+*.jpg
+
+# IDE
+.vscode/
+.idea/
+
+# Playwright
+**/.pw_profile/
