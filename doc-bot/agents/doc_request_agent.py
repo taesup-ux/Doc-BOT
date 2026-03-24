@@ -65,14 +65,6 @@ AMBIGUOUS_KEYWORDS: dict[str, dict] = {
         "label": "인감",
         "hint": "⚠️ 인감 관련 업무는 실물 처리가 필요합니다.\nGA팀에 직접 문의해 주세요!",
     },
-    "가이드": {
-        "label": "가이드",
-        "hint": (
-            "예) 지출결의서 가이드, 법인카드 가이드, 건강검진 가이드,\n"
-            "근무제도 가이드, 오피스 이용 가이드, 매출 가이드 등\n\n"
-            "👉 <https://www.notion.so/sandboxinc/30229436cbac81b8b88ef3bc1ab8fb7b?v=30229436cbac81a58931000c7666652f&p=31929436cbac806783e2fc20eeec1d90&pm=s|📋 전체 가이드 목록 보기>"
-        ),
-    },
 }
 
 # ─── 인사/비문서 패턴 — not_found 응답 제외 ──────────────────────────────────
@@ -347,14 +339,9 @@ def build_reply(doc_info: dict, has_file: bool = False) -> str:
     if has_file:
         return header + f"파일을 바로 아래에 첨부해 드립니다! 📎"
 
-    if direct_url:
-        return (
-            header
-            + f"👉 <{direct_url}|📂 {doc_info['name']} 바로 열기>"
-        )
-
+    link_url = direct_url or notion_url or LIBRARY_URL
     return (
         header
-        + f"아래 자료실에서 확인하실 수 있습니다.\n"
-        + f"👉 <{notion_url}|🏠 샌드박스 문서 자료실>"
+        + f"해당 자료실에서 직접 확인해주세요! 👇\n"
+        + f"👉 <{link_url}|🏠 샌드박스 문서 자료실>"
     )
