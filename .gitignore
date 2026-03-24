@@ -11,8 +11,6 @@ __pycache__/
 **/__pycache__/
 *.pyc
 
-# 로컬 파일 캐시
-**/knowledge/files/
 
 # 스크린샷
 *.png

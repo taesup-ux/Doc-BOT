@@ -9,8 +9,6 @@ __pycache__/
 *.pyc
 *.pyo
 
-# 로컬 파일 캐시 (79MB, Notion에서 재다운로드 가능)
-knowledge/files/
 
 # 스크린샷 / 디버그 이미지
 *.png
