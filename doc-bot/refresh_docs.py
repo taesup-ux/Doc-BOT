@@ -1,7 +1,7 @@
 # Sandbox Doc Bot - Notion DB → documents.json + 파일 캐시 자동 동기화
 #
 # 동작:
-#   1. Notion "자주찾는 공용 문서" DB 전체 조회
+#   1. Notion "자주찾는 공용 문서" DB + "자주찾는 부서별 문서" DB 전체 조회
 #   2. documents.json에 없는 신규 문서 자동 추가 (aliases 자동 생성)
 #   3. 기존 문서 파일 최신화 (Notion 파일명 → knowledge/files/ 저장)
 #   4. documents.json 업데이트
@@ -20,11 +20,18 @@ load_dotenv()
 DOCUMENTS_PATH = Path("knowledge/documents.json")
 FILES_DIR = Path("knowledge/files")
 
-# Notion 자주찾는 공용 문서 DB ID
-CHILD_DB_ID = "30229436cbac8110874ae5443858295f"
+# Notion DB IDs
+PUBLIC_DB_ID = "30229436cbac8110874ae5443858295f"   # 자주찾는 공용 문서
+DEPT_DB_ID   = "30229436cbac81fbaacce37d0dd6807d"   # 자주찾는 부서별 문서
 
 NOTION_API = "https://api.notion.com/v1"
 NOTION_VER = "2022-06-28"
+
+# 지원하는 파일 확장자 (Notion에서 직접 다운로드 가능한 파일)
+VALID_EXTENSIONS = {'.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt', '.hwp', '.zip'}
+
+# 문서명 앞 접두사 패턴 (제거 대상)
+PREFIX_PATTERN = re.compile(r'^\s*(\[.*?\]\s*)+')
 
 
 def notion_headers():
@@ -79,29 +86,46 @@ def get_file_info(props: dict) -> tuple[str, str]:
     return name, url
 
 
+def get_url_prop(props: dict) -> str:
+    """'URL' 속성에서 링크 추출."""
+    return props.get("URL", {}).get("url") or ""
+
+
+def strip_prefix(name: str) -> str:
+    """[양식], [가이드], [필독], [공유] 등 접두사 제거."""
+    return PREFIX_PATTERN.sub("", name).strip()
+
+
 def make_aliases(name: str) -> list:
     """문서명으로 기본 aliases 자동 생성."""
-    aliases = [name]
+    clean = strip_prefix(name)
+    aliases = list(dict.fromkeys([name, clean] if clean != name else [name]))
+
     # 공백 없는 버전
-    no_space = name.replace(" ", "")
-    if no_space != name:
+    no_space = clean.replace(" ", "")
+    if no_space not in aliases:
         aliases.append(no_space)
+
     # 괄호 제거
-    clean = re.sub(r"[()（）]", "", name).strip()
-    if clean not in aliases:
-        aliases.append(clean)
-    # 접미사 제거 (연도, 분기 패턴)
-    short = re.sub(r"\s*(20\d{2}|\d+Q|PPT/PDF|pdf|pptx)\s*", " ", name, flags=re.IGNORECASE).strip()
+    no_bracket = re.sub(r"[()（）\[\]]", "", clean).strip()
+    if no_bracket not in aliases:
+        aliases.append(no_bracket)
+
+    # 연도/분기 패턴 제거
+    short = re.sub(r"\s*(20\d{2}|\d+Q|PPT/PDF|pdf|pptx)\s*", " ", clean, flags=re.IGNORECASE).strip()
     if short and short not in aliases:
         aliases.append(short)
-    return list(dict.fromkeys(aliases))  # 중복 제거, 순서 유지
+
+    return list(dict.fromkeys(aliases))
 
 
 def safe_filename(doc_name: str, notion_filename: str) -> str:
     """저장할 로컬 파일명 결정: 문서명 기반 + Notion 확장자."""
-    ext = Path(notion_filename).suffix if notion_filename else ".pdf"
-    # 파일명에 사용 불가한 문자 제거
-    base = re.sub(r'[\\/:*?"<>|]', "", doc_name)
+    ext = Path(notion_filename).suffix.lower() if notion_filename else ".pdf"
+    if ext not in VALID_EXTENSIONS:
+        ext = ".pdf"
+    clean_name = strip_prefix(doc_name)
+    base = re.sub(r'[\\/:*?"<>|]', "", clean_name)
     return base + ext
 
 
@@ -113,78 +137,84 @@ def download_file(url: str, save_path: Path) -> int:
     return len(r.content) // 1024
 
 
-def main():
-    FILES_DIR.mkdir(parents=True, exist_ok=True)
+def is_external_url(url: str) -> bool:
+    """Google Drive / Google Docs / 외부 URL 여부 확인 (다운로드 불가)."""
+    if not url:
+        return False
+    external_hosts = ["docs.google.com", "drive.google.com", "notion.so"]
+    from urllib.parse import urlparse
+    host = urlparse(url).netloc.lower()
+    return any(h in host for h in external_hosts)
 
-    # 기존 documents.json 로드
-    if DOCUMENTS_PATH.exists():
-        with open(DOCUMENTS_PATH, encoding="utf-8") as f:
-            documents = json.load(f)
-    else:
-        documents = []
 
-    # 기존 page_id 인덱스
-    existing_ids = {doc.get("notion_page_id", ""): i for i, doc in enumerate(documents)}
+def sync_db(db_id: str, db_label: str, documents: list, existing_ids: dict) -> tuple[int, int, int, int]:
+    """단일 DB 동기화. (added, updated, skipped, failed) 반환."""
+    print(f"\n[{db_label}] 조회 중...")
+    pages = query_all_pages(db_id)
+    print(f"  {len(pages)}개 페이지 조회")
 
-    print("=" * 55)
-    print("Notion DB 동기화 시작")
-    print("=" * 55)
-
-    pages = query_all_pages(CHILD_DB_ID)
-    print(f"Notion DB: {len(pages)}개 페이지 조회")
-    print()
-
-    added, updated, skipped, failed = 0, 0, 0, 0
+    added = updated = skipped = failed = 0
 
     for page in pages:
         page_id = page["id"].replace("-", "")
         props = page["properties"]
         notion_url = page.get("url", "")
 
-        # 문서명 추출
-        doc_name = get_prop_text(props, "문서명")
-        if not doc_name:
-            doc_name = get_prop_text(props, "페이지") or get_prop_text(props, "이름")
-        if not doc_name:
-            print(f"  ⏭  page_id={page_id}: 문서명 없음, 건너뜀")
+        # 문서명 추출 (접두사 포함 원본 + 정제 버전 모두 사용)
+        raw_name = get_prop_text(props, "문서명")
+        if not raw_name:
+            raw_name = get_prop_text(props, "페이지") or get_prop_text(props, "이름")
+        if not raw_name:
             skipped += 1
             continue
 
+        doc_name = strip_prefix(raw_name)  # 표시용 이름 (접두사 제거)
+
         notion_fname, file_url = get_file_info(props)
 
-        # URL만 있는 경우 (오피스 가이드 등)
-        if not file_url and notion_fname.startswith("http"):
-            file_url = notion_fname
+        # URL 속성도 확인
+        url_prop = get_url_prop(props)
+
+        # 외부 URL이면 파일 다운로드 안 함
+        if is_external_url(file_url) or is_external_url(notion_fname):
+            file_url = ""
             notion_fname = ""
 
-        # 로컬 파일명 결정
-        local_file = safe_filename(doc_name, notion_fname) if notion_fname and not notion_fname.startswith("http") else ""
+        # 로컬 파일명 결정 (유효 확장자일 때만)
+        local_file = ""
+        if notion_fname and not is_external_url(notion_fname):
+            ext = Path(notion_fname).suffix.lower()
+            if ext in VALID_EXTENSIONS:
+                local_file = safe_filename(doc_name, notion_fname)
 
         # ── 신규 문서 추가 ──────────────────────────────────────────
         if page_id not in existing_ids:
             new_doc = {
                 "name": doc_name,
-                "aliases": make_aliases(doc_name),
+                "aliases": make_aliases(raw_name),
                 "notion_url": notion_url,
                 "notion_page_id": page_id,
                 "local_file": local_file,
                 "description": doc_name,
             }
+            if url_prop:
+                new_doc["external_url"] = url_prop
             documents.append(new_doc)
             existing_ids[page_id] = len(documents) - 1
             print(f"  ➕ 신규: {doc_name}")
             added += 1
         else:
-            # 기존 문서 — notion_url / local_file 업데이트
             idx = existing_ids[page_id]
             documents[idx]["notion_url"] = notion_url
             if local_file:
                 documents[idx]["local_file"] = local_file
+            if url_prop:
+                documents[idx]["external_url"] = url_prop
 
         # ── 파일 다운로드 ───────────────────────────────────────────
         if not file_url or not local_file:
             if not file_url:
-                print(f"  ⏭  {doc_name}: 첨부 파일 없음")
+                print(f"  ⏭  {doc_name}: 링크 전용")
             skipped += 1
             continue
 
@@ -197,13 +227,41 @@ def main():
             print(f"  ❌ {doc_name}: 다운로드 실패 — {e}")
             failed += 1
 
+    return added, updated, skipped, failed
+
+
+def main():
+    FILES_DIR.mkdir(parents=True, exist_ok=True)
+
+    # 기존 documents.json 로드
+    if DOCUMENTS_PATH.exists():
+        with open(DOCUMENTS_PATH, encoding="utf-8") as f:
+            documents = json.load(f)
+    else:
+        documents = []
+
+    existing_ids = {doc.get("notion_page_id", ""): i for i, doc in enumerate(documents)}
+
+    print("=" * 55)
+    print("Notion DB 동기화 시작")
+    print("=" * 55)
+
+    total_added = total_updated = total_skipped = total_failed = 0
+
+    for db_id, label in [(PUBLIC_DB_ID, "공용 문서"), (DEPT_DB_ID, "부서별 문서")]:
+        a, u, s, f = sync_db(db_id, label, documents, existing_ids)
+        total_added += a
+        total_updated += u
+        total_skipped += s
+        total_failed += f
+
     # documents.json 저장
     with open(DOCUMENTS_PATH, "w", encoding="utf-8") as f:
         json.dump(documents, f, ensure_ascii=False, indent=2)
 
     print()
     print("=" * 55)
-    print(f"✅ 완료: 신규 {added}개 | 파일 갱신 {updated}개 | 건너뜀 {skipped}개 | 실패 {failed}개")
+    print(f"✅ 완료: 신규 {total_added}개 | 파일 갱신 {total_updated}개 | 건너뜀 {total_skipped}개 | 실패 {total_failed}개")
     print(f"📝 documents.json 업데이트 완료 ({len(documents)}개 항목)")
     print("=" * 55)
 

@@ -74,7 +74,7 @@ def handle_message(message, client, logger):
         _processed_ts.popitem(last=False)
 
     text = message.get("text", "").strip()
-    if not text or len(text) < 5:
+    if not text or len(text) < 2:
         return
 
     if _is_excluded(text):
