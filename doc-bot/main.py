@@ -92,6 +92,7 @@ def handle_message(message, client, logger):
     for doc_info in doc_list:
         is_group = doc_info.get("is_group", False)
         has_file = False if is_group else doc_request.has_local_file(doc_info)
+        can_download = not is_group and not has_file and doc_request.has_downloadable_url(doc_info)
         reply_text = doc_request.build_reply(doc_info, has_file=has_file)
 
         try:
@@ -102,6 +103,8 @@ def handle_message(message, client, logger):
             )
             if has_file:
                 doc_request.upload_local_file(client, HELPDESK_CHANNEL, thread_ts, doc_info)
+            elif can_download:
+                doc_request.download_and_upload_url(client, HELPDESK_CHANNEL, thread_ts, doc_info)
             logger.info(f"[doc_request] 답변 완료: {doc_info['name']}, ts={ts}")
         except Exception as e:
             logger.error(f"[doc_request] 실패: {e}")

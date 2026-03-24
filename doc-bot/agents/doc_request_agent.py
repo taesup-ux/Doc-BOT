@@ -4,6 +4,10 @@
 
 import json
 import logging
+import re
+import os
+import tempfile
+import requests as _req
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -174,6 +178,88 @@ def detect_document_request(text: str) -> dict | None:
 
 
 VALID_DOC_EXTENSIONS = {'.pdf', '.docx', '.doc', '.xlsx', '.xls', '.pptx', '.ppt', '.hwp', '.zip'}
+
+
+# ─── Google Drive / Slides / Sheets URL 다운로드 ──────────────────────────────
+_GSLIDES_RE = re.compile(r'docs\.google\.com/presentation/d/([^/?&#]+)')
+_GSHEETS_RE = re.compile(r'docs\.google\.com/spreadsheets/d/([^/?&#]+)')
+_GDRIVE_FILE_RE = re.compile(r'drive\.google\.com/file/d/([^/?&#]+)')
+
+
+def get_download_url(url: str) -> tuple[str, str]:
+    """Google Drive/Slides/Sheets URL → (다운로드URL, 확장자). 해당 없으면 ('', '')."""
+    if not url:
+        return '', ''
+    m = _GSLIDES_RE.search(url)
+    if m:
+        return f'https://docs.google.com/presentation/d/{m.group(1)}/export/pdf', '.pdf'
+    m = _GSHEETS_RE.search(url)
+    if m:
+        return f'https://docs.google.com/spreadsheets/d/{m.group(1)}/export?format=pdf', '.pdf'
+    m = _GDRIVE_FILE_RE.search(url)
+    if m:
+        return f'https://drive.google.com/uc?export=download&id={m.group(1)}', ''
+    return '', ''
+
+
+def has_downloadable_url(doc_info: dict) -> bool:
+    """direct_url이 Google Drive/Slides/Sheets 다운로드 가능 URL인지 확인."""
+    url, _ = get_download_url(doc_info.get('direct_url', ''))
+    return bool(url)
+
+
+def download_and_upload_url(client, channel: str, thread_ts: str, doc_info: dict) -> bool:
+    """
+    direct_url에서 파일 다운로드 후 Slack 업로드.
+    반환값: True(성공) / False(실패 → 링크 사용 권장)
+    """
+    direct_url = doc_info.get('direct_url', '')
+    download_url, default_ext = get_download_url(direct_url)
+    if not download_url:
+        return False
+
+    try:
+        session = _req.Session()
+        session.headers.update({'User-Agent': 'Mozilla/5.0'})
+        r = session.get(download_url, timeout=60, allow_redirects=True)
+        r.raise_for_status()
+
+        content_type = r.headers.get('Content-Type', '')
+        if 'text/html' in content_type:
+            logger.warning(f"[download_url] 로그인 필요 또는 다운로드 불가: {doc_info.get('name')}")
+            return False
+
+        if not default_ext:
+            if 'pdf' in content_type:
+                default_ext = '.pdf'
+            elif 'excel' in content_type or 'spreadsheet' in content_type:
+                default_ext = '.xlsx'
+            elif 'presentation' in content_type or 'powerpoint' in content_type:
+                default_ext = '.pptx'
+            else:
+                default_ext = '.pdf'
+
+        filename = f"{doc_info['name']}{default_ext}"
+        tmp_path = ''
+        try:
+            with tempfile.NamedTemporaryFile(suffix=default_ext, delete=False) as f:
+                f.write(r.content)
+                tmp_path = f.name
+            client.files_upload_v2(
+                channel=channel,
+                thread_ts=thread_ts,
+                file=tmp_path,
+                filename=filename,
+                title=doc_info['name'],
+                initial_comment=f"📎 *{doc_info['name']}* 파일입니다.",
+            )
+            return True
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+    except Exception as e:
+        logger.error(f"[download_url] 실패: {doc_info.get('name')}, {e}")
+        return False
 
 
 def has_local_file(doc_info: dict) -> bool:
