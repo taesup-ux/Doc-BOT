@@ -80,12 +80,16 @@ def detect_document_requests(text: str) -> list[dict]:
         return matched
 
     # 2단계: 일반 문서/서류 요청인지 확인
-    general_doc_keywords = ["서류", "자료", "문서", "증명서", "증빙", "첨부"]
+    general_doc_keywords = [
+        "서류", "자료", "문서", "증명서", "증빙", "첨부",
+        "신청서", "계약서", "확인서", "등록증", "사본",
+        "계산서", "영수증", "재직", "재무", "통장", "견적서",
+    ]
     has_doc_keyword = any(kw in text for kw in general_doc_keywords)
     has_request_verb = any(verb in text for verb in REQUEST_VERBS)
 
     if has_doc_keyword and has_request_verb:
-        return [{"name": "자료실", "notion_url": LIBRARY_URL, "description": ""}]
+        return [{"name": "자료실_없음", "notion_url": LIBRARY_URL, "description": ""}]
 
     return []
 
@@ -134,12 +138,11 @@ def upload_local_file(client, channel: str, thread_ts: str, doc_info: dict) -> b
 
 def build_reply(doc_info: dict, has_file: bool = False) -> str:
     """문서 안내 답변 텍스트 생성."""
-    if doc_info["name"] == "자료실":
+    if doc_info["name"] == "자료실_없음":
         return (
-            f"*📂 문서/서류 요청이 확인되었습니다.*\n\n"
-            f"샌드박스 공식 자료실에서 필요하신 문서를 찾아보실 수 있습니다.\n"
-            f"👉 <{doc_info['notion_url']}|🏠 샌드박스 문서 자료실>\n\n"
-            f"원하시는 문서가 없으면 GA팀에 직접 문의해 주세요!"
+            f"*📭 요청하신 문서를 자료실에서 찾지 못했습니다.*\n\n"
+            f"아래 공식 자료실에서 직접 확인해 보세요.\n"
+            f"👉 <{doc_info['notion_url']}|🏠 샌드박스 문서 자료실>"
         )
 
     if doc_info.get("is_group"):
@@ -163,4 +166,4 @@ def build_reply(doc_info: dict, has_file: bool = False) -> str:
     )
     if has_file:
         return base + "파일도 바로 아래에 첨부해 드립니다! 📎"
-    return base + "해당 페이지에서 찾기 어려우시면 GA팀에 말씀해 주세요!"
+    return base.rstrip()
