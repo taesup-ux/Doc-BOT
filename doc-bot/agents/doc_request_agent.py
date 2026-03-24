@@ -118,6 +118,7 @@ def detect_document_requests(text: str) -> list[dict]:
                 "description": doc.get("description", ""),
                 "local_file": doc.get("local_file", ""),
                 "is_group": doc.get("is_group", False),
+                "direct_url": doc.get("direct_url", ""),
             })
             matched_indices.add(idx)
 
@@ -238,12 +239,22 @@ def build_reply(doc_info: dict, has_file: bool = False) -> str:
         return reply
 
     desc = f" ({doc_info['description']})" if doc_info["description"] else ""
+    direct_url = doc_info.get("direct_url", "")
     notion_url = doc_info.get("notion_url", "")
-    base = (
-        f"*📄 {doc_info['name']}{desc} 요청이 확인되었습니다.*\n\n"
-        f"아래 자료실에서 확인하실 수 있습니다.\n"
-        f"👉 <{notion_url}|🏠 샌드박스 문서 자료실>\n\n"
-    )
+
+    header = f"*📄 {doc_info['name']}{desc} 요청이 확인되었습니다.*\n\n"
+
     if has_file:
-        return base + "파일도 바로 아래에 첨부해 드립니다! 📎"
-    return base.rstrip()
+        return header + f"파일을 바로 아래에 첨부해 드립니다! 📎"
+
+    if direct_url:
+        return (
+            header
+            + f"👉 <{direct_url}|📂 {doc_info['name']} 바로 열기>"
+        )
+
+    return (
+        header
+        + f"아래 자료실에서 확인하실 수 있습니다.\n"
+        + f"👉 <{notion_url}|🏠 샌드박스 문서 자료실>"
+    )

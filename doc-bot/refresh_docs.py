@@ -172,13 +172,18 @@ def sync_db(db_id: str, db_label: str, documents: list, existing_ids: dict) -> t
 
         notion_fname, file_url = get_file_info(props)
 
-        # URL 속성도 확인
+        # URL 속성 확인
         url_prop = get_url_prop(props)
 
-        # 외부 URL이면 파일 다운로드 안 함
+        # 외부 URL → direct_url로 저장 (다운로드 불가)
+        file_ext_url = ""
         if is_external_url(file_url) or is_external_url(notion_fname):
+            file_ext_url = file_url or notion_fname
             file_url = ""
             notion_fname = ""
+
+        # direct_url: URL 속성 우선, 없으면 파일의 외부 URL
+        direct_url = url_prop or file_ext_url
 
         # 로컬 파일명 결정 (유효 확장자일 때만)
         local_file = ""
@@ -197,8 +202,8 @@ def sync_db(db_id: str, db_label: str, documents: list, existing_ids: dict) -> t
                 "local_file": local_file,
                 "description": doc_name,
             }
-            if url_prop:
-                new_doc["external_url"] = url_prop
+            if direct_url:
+                new_doc["direct_url"] = direct_url
             documents.append(new_doc)
             existing_ids[page_id] = len(documents) - 1
             print(f"  ➕ 신규: {doc_name}")
@@ -208,8 +213,8 @@ def sync_db(db_id: str, db_label: str, documents: list, existing_ids: dict) -> t
             documents[idx]["notion_url"] = notion_url
             if local_file:
                 documents[idx]["local_file"] = local_file
-            if url_prop:
-                documents[idx]["external_url"] = url_prop
+            if direct_url:
+                documents[idx]["direct_url"] = direct_url
 
         # ── 파일 다운로드 ───────────────────────────────────────────
         if not file_url or not local_file:
