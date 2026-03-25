@@ -331,17 +331,10 @@ def build_reply(doc_info: dict, has_file: bool = False) -> str:
         return reply
 
     desc = f" ({doc_info['description']})" if doc_info["description"] else ""
-    direct_url = doc_info.get("direct_url", "")
-    notion_url = doc_info.get("notion_url", "")
-
     header = f"*📄 {doc_info['name']}{desc} 요청이 확인되었습니다.*\n\n"
+    library_line = f"아래 자료실에서 확인하실 수 있습니다.\n👉 <{LIBRARY_URL}|🏠 샌드박스 문서 자료실>\n\n"
 
     if has_file:
-        return header + f"파일을 바로 아래에 첨부해 드립니다! 📎"
+        return header + library_line + f"파일도 바로 아래에 첨부해 드립니다! 📎"
 
-    link_url = direct_url or notion_url or LIBRARY_URL
-    return (
-        header
-        + f"해당 자료실에서 직접 확인해주세요! 👇\n"
-        + f"👉 <{link_url}|🏠 샌드박스 문서 자료실>"
-    )
+    return header + library_line + f"파일이 없는 경우 GA팀에 문의해 주세요."
