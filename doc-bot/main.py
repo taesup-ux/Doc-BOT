@@ -99,9 +99,13 @@ def handle_message(message, client, logger):
     if not doc_list:
         return
 
-    # 파악 중 이모티콘
+    # 감지 중 안내 메시지
     try:
-        client.reactions_add(channel=channel, timestamp=ts, name="thinking_face")
+        client.chat_postMessage(
+            channel=HELPDESK_CHANNEL,
+            thread_ts=thread_ts,
+            text="요청 접수했습니다! 서류 찾아드릴게요 🤔",
+        )
     except Exception:
         pass
 
