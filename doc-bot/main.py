@@ -12,13 +12,23 @@
 #   3. 헬프데스크 채널에 봇 초대: /invite @Sandbox Doc Bot
 #   4. python refresh_docs.py 실행 → 로컬 파일 캐시 생성 (선택)
 
+import logging
 import os
 import re
+import sys
 from collections import OrderedDict
 from datetime import datetime
 
+import requests
 from dotenv import load_dotenv
 from slack_bolt import App
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
 
 load_dotenv()
 
