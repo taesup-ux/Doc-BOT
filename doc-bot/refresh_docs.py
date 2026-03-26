@@ -116,6 +116,14 @@ def make_aliases(name: str) -> list:
     if short and short not in aliases:
         aliases.append(short)
 
+    # 첫 번째 핵심 키워드 추출 (다중어 문서명에서 앞 단어만으로도 검색 가능하도록)
+    # 예: "건강검진 어플 이용가이드" → "건강검진"
+    parts = clean.split()
+    if len(parts) > 1 and len(parts[0]) >= 2 and not parts[0][0].isdigit():
+        first_word = parts[0]
+        if first_word not in aliases:
+            aliases.append(first_word)
+
     return list(dict.fromkeys(aliases))
 
 
@@ -221,6 +229,8 @@ def sync_db(db_id: str, db_label: str, documents: list, existing_ids: dict) -> t
                 documents[idx]["local_file"] = local_file
             if direct_url:
                 documents[idx]["direct_url"] = direct_url
+            # aliases 갱신: 인코딩 오류 복구 및 신규 키워드 반영
+            documents[idx]["aliases"] = make_aliases(raw_name)
 
         # ── 파일 다운로드 ───────────────────────────────────────────
         if not file_url or not local_file:
