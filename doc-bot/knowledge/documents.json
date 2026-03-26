@@ -7,6 +7,9 @@
     "notion_url": "https://www.notion.so/30229436cbac81038a60cf79fb81c46c",
     "notion_page_id": "30229436cbac81038a60cf79fb81c46c",
     "local_file": "법인등기부등본.pdf",
+    "local_files": [
+      "법인등기부등본.pdf"
+    ],
     "description": "법인등기부등본"
   },
   {
@@ -18,7 +21,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac810dbc9dd287f5822af6",
     "notion_page_id": "30229436cbac810dbc9dd287f5822af6",
-    "local_file": "출판사 신고확인증.pdf",
+    "local_file": "출판사.pdf",
+    "local_files": [
+      "출판사.pdf"
+    ],
     "description": "출판사 신고확인증"
   },
   {
@@ -30,7 +36,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac8110a772c605717512e4",
     "notion_page_id": "30229436cbac8110a772c605717512e4",
-    "local_file": "영화 제작업 신고증.pdf",
+    "local_file": "영화제작업.pdf",
+    "local_files": [
+      "영화제작업.pdf"
+    ],
     "description": "영화 제작업 신고증"
   },
   {
@@ -42,7 +51,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac8119b753e11c608df955",
     "notion_page_id": "30229436cbac8119b753e11c608df955",
-    "local_file": "애니메이션 배급업 신고증.pdf",
+    "local_file": "애니메이션배급업.pdf",
+    "local_files": [
+      "애니메이션배급업.pdf"
+    ],
     "description": "애니메이션 배급업 신고증"
   },
   {
@@ -55,6 +67,9 @@
     "notion_url": "https://www.notion.so/30229436cbac811aba9ad58cf151cd7b",
     "notion_page_id": "30229436cbac811aba9ad58cf151cd7b",
     "local_file": "위임장 양식.docx",
+    "local_files": [
+      "위임장 양식.docx"
+    ],
     "description": "위임장 양식"
   },
   {
@@ -67,7 +82,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac812f8471ebc1377a0efa",
     "notion_page_id": "30229436cbac812f8471ebc1377a0efa",
-    "local_file": "(영문) 사업자등록증.pdf",
+    "local_file": "영문사업자등록증.pdf",
+    "local_files": [
+      "영문사업자등록증.pdf"
+    ],
     "description": "(영문) 사업자등록증"
   },
   {
@@ -79,7 +97,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac813fb238f19a0d9be469",
     "notion_page_id": "30229436cbac813fb238f19a0d9be469",
-    "local_file": "영화 배급업 신고증.pdf",
+    "local_file": "영화배급업.pdf",
+    "local_files": [
+      "영화배급업.pdf"
+    ],
     "description": "영화 배급업 신고증"
   },
   {
@@ -91,7 +112,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac8142a444f1b3e6309409",
     "notion_page_id": "30229436cbac8142a444f1b3e6309409",
-    "local_file": "부가통신사업 신고증명서.pdf",
+    "local_file": "부가통신사업.pdf",
+    "local_files": [
+      "부가통신사업.pdf"
+    ],
     "description": "부가통신사업 신고증명서"
   },
   {
@@ -103,7 +127,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac814aa69cc9b5b64b8334",
     "notion_page_id": "30229436cbac814aa69cc9b5b64b8334",
-    "local_file": "대중문화예술기획업 등록증.pdf",
+    "local_file": "대중문화예술기획업.pdf",
+    "local_files": [
+      "대중문화예술기획업.pdf"
+    ],
     "description": "대중문화예술기획업 등록증"
   },
   {
@@ -114,6 +141,9 @@
     "notion_url": "https://www.notion.so/30229436cbac814e9f13deee71e25746",
     "notion_page_id": "30229436cbac814e9f13deee71e25746",
     "local_file": "사업자등록증.pdf",
+    "local_files": [
+      "사업자등록증.pdf"
+    ],
     "description": "사업자등록증"
   },
   {
@@ -126,6 +156,9 @@
     "notion_url": "https://www.notion.so/30229436cbac814fa762e8a67f15dd21",
     "notion_page_id": "30229436cbac814fa762e8a67f15dd21",
     "local_file": "사용인감계 양식.doc",
+    "local_files": [
+      "사용인감계 양식.doc"
+    ],
     "description": "사용인감계 양식"
   },
   {
@@ -137,7 +170,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac815ca2f0c39be219f86f",
     "notion_page_id": "30229436cbac815ca2f0c39be219f86f",
-    "local_file": "소프트웨어사업자 일반 현황 관리확인서.pdf",
+    "local_file": "소프트웨어사업자.pdf",
+    "local_files": [
+      "소프트웨어사업자.pdf"
+    ],
     "description": "소프트웨어사업자 일반 현황 관리확인서"
   },
   {
@@ -149,7 +185,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac81619296d8199fade0ac",
     "notion_page_id": "30229436cbac81619296d8199fade0ac",
-    "local_file": "통신판매업 신고증.pdf",
+    "local_file": "통신판매업.pdf",
+    "local_files": [
+      "통신판매업.pdf"
+    ],
     "description": "통신판매업 신고증"
   },
   {
@@ -161,7 +200,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac8167b1e8dc541f305a4d",
     "notion_page_id": "30229436cbac8167b1e8dc541f305a4d",
-    "local_file": "애니메이션 제작업 신고증.pdf",
+    "local_file": "애니메이션제작업.pdf",
+    "local_files": [
+      "애니메이션제작업.pdf"
+    ],
     "description": "애니메이션 제작업 신고증"
   },
   {
@@ -173,7 +215,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac8176afdcd1fea986bd07",
     "notion_page_id": "30229436cbac8176afdcd1fea986bd07",
-    "local_file": "비디오물 제작업 신고증.pdf",
+    "local_file": "비디오제작업.pdf",
+    "local_files": [
+      "비디오제작업.pdf"
+    ],
     "description": "비디오물 제작업 신고증"
   },
   {
@@ -185,7 +230,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac817b81a1ec4c065a7cfc",
     "notion_page_id": "30229436cbac817b81a1ec4c065a7cfc",
-    "local_file": "게임배급업자 등록증.pdf",
+    "local_file": "게임배급업.pdf",
+    "local_files": [
+      "게임배급업.pdf"
+    ],
     "description": "게임배급업자 등록증"
   },
   {
@@ -196,6 +244,9 @@
     "notion_url": "https://www.notion.so/30229436cbac81b6a8f3e0d01f4d1594",
     "notion_page_id": "30229436cbac81b6a8f3e0d01f4d1594",
     "local_file": "벤처기업확인서.pdf",
+    "local_files": [
+      "벤처기업확인서.pdf"
+    ],
     "description": "벤처기업확인서"
   },
   {
@@ -207,7 +258,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac81be9419fd83bff01069",
     "notion_page_id": "30229436cbac81be9419fd83bff01069",
-    "local_file": "게임제작업자 등록증.pdf",
+    "local_file": "게임제작업.pdf",
+    "local_files": [
+      "게임제작업.pdf"
+    ],
     "description": "게임제작업자 등록증"
   },
   {
@@ -218,6 +272,9 @@
     "notion_url": "https://www.notion.so/30229436cbac81d3b6b3c259e3cf02df",
     "notion_page_id": "30229436cbac81d3b6b3c259e3cf02df",
     "local_file": "중소기업확인서.pdf",
+    "local_files": [
+      "중소기업확인서.pdf"
+    ],
     "description": "중소기업확인서"
   },
   {
@@ -229,7 +286,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac81e19b85e2ff6d8520b4",
     "notion_page_id": "30229436cbac81e19b85e2ff6d8520b4",
-    "local_file": "방송영상독립제작사 신고증.pdf",
+    "local_file": "방송영상독립제작사.pdf",
+    "local_files": [
+      "방송영상독립제작사.pdf"
+    ],
     "description": "방송영상독립제작사 신고증"
   },
   {
@@ -239,7 +299,10 @@
     ],
     "notion_url": "https://www.notion.so/30229436cbac81e390f5f17551cc26cd",
     "notion_page_id": "30229436cbac81e390f5f17551cc26cd",
-    "local_file": "사업자등록증명원.pdf",
+    "local_file": "사업자등록증명원_2026-01-28.pdf",
+    "local_files": [
+      "사업자등록증명원_2026-01-28.pdf"
+    ],
     "description": "사업자등록증명원"
   },
   {
@@ -250,36 +313,55 @@
     "notion_url": "https://www.notion.so/30229436cbac81f7afede28787d718c6",
     "notion_page_id": "30229436cbac81f7afede28787d718c6",
     "local_file": "직접생산확인서.pdf",
+    "local_files": [
+      "직접생산확인서.pdf"
+    ],
     "description": "직접생산확인서"
   },
   {
     "name": "매출입금용_통장사본_원화",
     "aliases": [
-      "매출입금용_통장사본_원화"
+      "매출입금용_통장사본_원화",
+      "매출입금용",
+      "매출입금용 통장사본 원화"
     ],
     "notion_url": "https://www.notion.so/_-_-31129436cbac800db217ccbf291cb588",
     "notion_page_id": "31129436cbac800db217ccbf291cb588",
     "local_file": "매출입금용_통장사본_원화.pdf",
+    "local_files": [
+      "매출입금용_통장사본_원화.pdf"
+    ],
     "description": "매출입금용_통장사본_원화"
   },
   {
     "name": "매출입금용_통장사본_외화",
     "aliases": [
-      "매출입금용_통장사본_외화"
+      "매출입금용_통장사본_외화",
+      "매출입금용",
+      "매출입금용 통장사본 외화"
     ],
     "notion_url": "https://www.notion.so/_-_-31129436cbac8052b88aec86a01c96b7",
     "notion_page_id": "31129436cbac8052b88aec86a01c96b7",
     "local_file": "매출입금용_통장사본_외화.pdf",
+    "local_files": [
+      "매출입금용_통장사본_외화.pdf"
+    ],
     "description": "매출입금용_통장사본_외화"
   },
   {
     "name": "개인법인카드_신청서_IBK컴퍼니카드",
     "aliases": [
-      "개인법인카드_신청서_IBK컴퍼니카드"
+      "개인법인카드_신청서_IBK컴퍼니카드",
+      "개인법인카드",
+      "개인법인카드 신청서 IBK컴퍼니카드"
     ],
     "notion_url": "https://www.notion.so/_-_IBK-31229436cbac8008ba73ffe5237ad32a",
     "notion_page_id": "31229436cbac8008ba73ffe5237ad32a",
-    "local_file": "개인법인카드_신청서_IBK컴퍼니카드.pdf",
+    "local_file": "IBK컴퍼니카드_지정식법인카드_신청서_2026Y.pdf",
+    "local_files": [
+      "IBK컴퍼니카드_지정식법인카드_신청서_2026Y.pdf",
+      "개인정보동의서(작성용) (1).pdf"
+    ],
     "description": "개인법인카드_신청서_IBK컴퍼니카드"
   },
   {
@@ -291,7 +373,11 @@
     ],
     "notion_url": "https://www.notion.so/2026-1Q-PPT-PDF-32029436cbac803aa904f427ed87c8f8",
     "notion_page_id": "32029436cbac803aa904f427ed87c8f8",
-    "local_file": "2026 1Q 회사소개서 PPTPDF.pptx",
+    "local_file": "[최종] 샌드박스네트워크_회사소개서_26_1Q.pptx",
+    "local_files": [
+      "[최종] 샌드박스네트워크_회사소개서_26_1Q.pptx",
+      "[최종] 샌드박스네트워크_회사소개서_26_1Q.pdf"
+    ],
     "description": "2026 1Q 회사소개서 PPT/PDF"
   },
   {
@@ -301,13 +387,15 @@
     ],
     "notion_url": "https://www.notion.so/32c29436cbac80fe954dc5629f7b9fe2",
     "notion_page_id": "32c29436cbac80fe954dc5629f7b9fe2",
-    "local_file": "주업종코드.pdf",
+    "local_file": "주업종코드확인 (26.03.23).pdf",
+    "local_files": [
+      "주업종코드확인 (26.03.23).pdf"
+    ],
     "description": "주업종코드"
   },
   {
     "name": "퇴직연금 중도인출 신청서",
     "aliases": [
-      "[양식] 퇴직연금 중도인출 신청서",
       "퇴직연금 중도인출 신청서",
       "퇴직연금중도인출신청서",
       "퇴직연금"
@@ -315,12 +403,14 @@
     "notion_url": "https://www.notion.so/30229436cbac8136b98afe64435fe708",
     "notion_page_id": "30229436cbac8136b98afe64435fe708",
     "local_file": "퇴직연금 중도인출 신청서.pdf",
+    "local_files": [
+      "퇴직연금 중도인출 신청서.pdf"
+    ],
     "description": "퇴직연금 중도인출 신청서"
   },
   {
     "name": "재택근무 보고 서식",
     "aliases": [
-      "[양식] 재택근무 보고 서식",
       "재택근무 보고 서식",
       "재택근무보고서식",
       "재택근무"
@@ -328,108 +418,130 @@
     "notion_url": "https://www.notion.so/30229436cbac81998887da714bb7cf52",
     "notion_page_id": "30229436cbac81998887da714bb7cf52",
     "local_file": "재택근무 보고 서식.xlsx",
+    "local_files": [
+      "재택근무 보고 서식.xlsx"
+    ],
     "description": "재택근무 보고 서식"
   },
   {
     "name": "회사소개서",
     "aliases": [
-      "[공유] 회사소개서",
       "회사소개서"
     ],
     "notion_url": "https://www.notion.so/30229436cbac81d4b9f9ff40022a1f6f",
     "notion_page_id": "30229436cbac81d4b9f9ff40022a1f6f",
-    "local_file": "회사소개서.pdf",
+    "local_file": "[최종] 샌드박스네트워크_회사소개서_26_1Q.pdf",
+    "local_files": [
+      "[최종] 샌드박스네트워크_회사소개서_26_1Q.pdf",
+      "[최종] 샌드박스네트워크_회사소개서_26_1Q.pptx"
+    ],
     "description": "회사소개서"
   },
   {
     "name": "건강검진 어플 이용가이드",
     "aliases": [
-      "[가이드] 건강검진 어플 이용가이드",
       "건강검진 어플 이용가이드",
       "건강검진어플이용가이드",
       "건강검진"
     ],
     "notion_url": "https://www.notion.so/31929436cbac800e92f0f134179cd712",
     "notion_page_id": "31929436cbac800e92f0f134179cd712",
-    "local_file": "건강검진 어플 이용가이드.pdf",
+    "local_file": "어떠케어 APP 이용가이드_2025.pdf",
+    "local_files": [
+      "어떠케어 APP 이용가이드_2025.pdf"
+    ],
     "description": "건강검진 어플 이용가이드"
   },
   {
     "name": "치과치료 확인서",
     "aliases": [
-      "[양식] 치과치료 확인서",
       "치과치료 확인서",
       "치과치료확인서",
       "치과치료"
     ],
     "notion_url": "https://www.notion.so/31929436cbac801b8ff9e2d1680df9cf",
     "notion_page_id": "31929436cbac801b8ff9e2d1680df9cf",
-    "local_file": "치과치료 확인서.pdf",
+    "local_file": "치과치료확인서.pdf",
+    "local_files": [
+      "치과치료확인서.pdf"
+    ],
     "description": "치과치료 확인서"
   },
   {
     "name": "단체보험 청구서",
     "aliases": [
-      "[양식] 단체보험 청구서",
       "단체보험 청구서",
       "단체보험청구서",
       "단체보험"
     ],
     "notion_url": "https://www.notion.so/31929436cbac801b9661da6637713bcd",
     "notion_page_id": "31929436cbac801b9661da6637713bcd",
-    "local_file": "단체보험 청구서.pdf",
+    "local_file": "2025_Sandbox Network_보험금 청구서.pdf",
+    "local_files": [
+      "2025_Sandbox Network_보험금 청구서.pdf"
+    ],
     "description": "단체보험 청구서"
   },
   {
     "name": "보험금 청구방법_Mcare",
     "aliases": [
-      "[가이드] 보험금 청구방법_Mcare",
       "보험금 청구방법_Mcare",
       "보험금청구방법_Mcare",
-      "보험금"
+      "보험금",
+      "보험금 청구방법",
+      "보험금 청구방법 Mcare"
     ],
     "notion_url": "https://www.notion.so/_Mcare-31929436cbac80468f46cea69d2ccd44",
     "notion_page_id": "31929436cbac80468f46cea69d2ccd44",
-    "local_file": "보험금 청구방법_Mcare.pdf",
+    "local_file": "보험금청구 방법_Mcare어플.pdf",
+    "local_files": [
+      "보험금청구 방법_Mcare어플.pdf"
+    ],
     "description": "보험금 청구방법_Mcare"
   },
   {
     "name": "퇴직급여 신청서",
     "aliases": [
-      "[양식] 퇴직급여 신청서",
       "퇴직급여 신청서",
       "퇴직급여신청서",
       "퇴직급여"
     ],
     "notion_url": "https://www.notion.so/31929436cbac8076a893f4dad92edcdf",
     "notion_page_id": "31929436cbac8076a893f4dad92edcdf",
-    "local_file": "퇴직급여 신청서.pdf",
+    "local_file": "퇴직연금_퇴직급여신청서(DC_기업형IRP)_20241031.pdf",
+    "local_files": [
+      "퇴직연금_퇴직급여신청서(DC_기업형IRP)_20241031.pdf"
+    ],
     "description": "퇴직급여 신청서"
   },
   {
     "name": "퇴직절차 확인서",
     "aliases": [
-      "[양식] 퇴직절차 확인서",
       "퇴직절차 확인서",
       "퇴직절차확인서",
       "퇴직절차"
     ],
     "notion_url": "https://www.notion.so/31929436cbac80e0b54decc21f70df95",
     "notion_page_id": "31929436cbac80e0b54decc21f70df95",
-    "local_file": "퇴직절차 확인서.pdf",
+    "local_file": "퇴직절차확인서_20251231.pdf",
+    "local_files": [
+      "퇴직절차확인서_20251231.pdf"
+    ],
     "description": "퇴직절차 확인서"
   },
   {
     "name": "단체보험 매뉴얼",
     "aliases": [
-      "[가이드] 단체보험 매뉴얼",
       "단체보험 매뉴얼",
       "단체보험매뉴얼",
       "단체보험"
     ],
     "notion_url": "https://www.notion.so/31929436cbac80fca5b1f5d763845691",
     "notion_page_id": "31929436cbac80fca5b1f5d763845691",
-    "local_file": "단체보험 매뉴얼.pdf",
+    "local_file": "2025_Sandbox Network_단체보험 매뉴얼.pdf",
+    "local_files": [
+      "2025_Sandbox Network_단체보험 매뉴얼.pdf"
+    ],
     "description": "단체보험 매뉴얼"
   },
   {
@@ -439,7 +551,10 @@
     ],
     "notion_url": "https://www.notion.so/31a29436cbac8045a2e0cb2a5a828109",
     "notion_page_id": "31a29436cbac8045a2e0cb2a5a828109",
-    "local_file": "수령확인증.docx",
+    "local_file": "수령확인증_양식.docx",
+    "local_files": [
+      "수령확인증_양식.docx"
+    ],
     "description": "수령확인증"
   },
   {
@@ -450,21 +565,26 @@
     ],
     "notion_url": "https://www.notion.so/31a29436cbac807fb2c0d72e5d4986a5",
     "notion_page_id": "31a29436cbac807fb2c0d72e5d4986a5",
-    "local_file": "퀵 서비스 안내.pdf",
+    "local_file": "GA_퀵서비스_(후다닥)_이용_가이드(개별_가입_필요).pdf",
+    "local_files": [
+      "GA_퀵서비스_(후다닥)_이용_가이드(개별_가입_필요).pdf"
+    ],
     "description": "퀵 서비스 안내",
     "direct_url": "https://www.notion.so/sandboxinc/29529436cbac8046b75dc979bdd2b6ee"
   },
   {
     "name": "크리에이터 파트너십 안내서",
     "aliases": [
-      "[가이드] 크리에이터 파트너십 안내서",
       "크리에이터 파트너십 안내서",
       "크리에이터파트너십안내서",
       "크리에이터"
     ],
     "notion_url": "https://www.notion.so/32029436cbac80059c2df01a8f9f1642",
     "notion_page_id": "32029436cbac80059c2df01a8f9f1642",
-    "local_file": "크리에이터 파트너십 안내서.pdf",
+    "local_file": "[필독] 샌드박스네트워크 크리에이터 파트너십 안내서.pdf",
+    "local_files": [
+      "[필독] 샌드박스네트워크 크리에이터 파트너십 안내서.pdf"
+    ],
     "description": "크리에이터 파트너십 안내서"
   }
 ]

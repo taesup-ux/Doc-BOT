@@ -71,19 +71,25 @@ def get_prop_text(props: dict, key: str) -> str:
 
 
 def get_file_info(props: dict) -> tuple[str, str]:
-    """'문서 파일' 속성에서 (파일명, URL) 반환. 없으면 ('', '')."""
+    """'문서 파일' 속성에서 첫 번째 (파일명, URL) 반환. 없으면 ('', '')."""
+    all_files = get_all_file_infos(props)
+    return all_files[0] if all_files else ("", "")
+
+
+def get_all_file_infos(props: dict) -> list[tuple[str, str]]:
+    """'문서 파일' 속성에서 모든 (파일명, URL) 목록 반환."""
     files = props.get("문서 파일", {}).get("files", [])
-    if not files:
-        return "", ""
-    f = files[0]
-    name = f.get("name", "")
-    if f["type"] == "file":
-        url = f["file"]["url"]
-    elif f["type"] == "external":
-        url = f["external"]["url"]
-    else:
-        return "", ""
-    return name, url
+    result = []
+    for f in files:
+        name = f.get("name", "")
+        if f["type"] == "file":
+            url = f["file"]["url"]
+        elif f["type"] == "external":
+            url = f["external"]["url"]
+        else:
+            continue
+        result.append((name, url))
+    return result
 
 
 def get_url_prop(props: dict) -> str:
@@ -123,6 +129,17 @@ def make_aliases(name: str) -> list:
         first_word = parts[0]
         if first_word not in aliases:
             aliases.append(first_word)
+
+    # 밑줄(_) 구분 문서명 처리 (예: "개인법인카드_신청서_IBK컴퍼니카드")
+    # 개별 토큰은 오탐 위험 → 첫 토큰 + 공백 버전만 추가
+    if "_" in clean:
+        underscore_parts = clean.split("_")
+        first_tok = underscore_parts[0]
+        if len(first_tok) >= 2 and not first_tok[0].isdigit() and first_tok not in aliases:
+            aliases.append(first_tok)
+        spaced = clean.replace("_", " ").strip()
+        if spaced not in aliases:
+            aliases.append(spaced)
 
     return list(dict.fromkeys(aliases))
 
@@ -178,33 +195,46 @@ def sync_db(db_id: str, db_label: str, documents: list, existing_ids: dict) -> t
 
         doc_name = strip_prefix(raw_name)  # 표시용 이름 (접두사 제거)
 
-        notion_fname, file_url = get_file_info(props)
-
         # URL 속성 확인
         url_prop = get_url_prop(props)
+        direct_url = url_prop  # 기본값: URL 속성
 
-        # 외부 URL → direct_url로 저장 (다운로드 불가)
-        file_ext_url = ""
-        if is_external_url(file_url) or is_external_url(notion_fname):
-            file_ext_url = file_url or notion_fname
-            file_url = ""
-            notion_fname = ""
+        # 모든 첨부 파일 처리
+        all_files = get_all_file_infos(props)
 
-        # direct_url: URL 속성 우선, 없으면 파일의 외부 URL
-        direct_url = url_prop or file_ext_url
+        # 외부 URL 전용 (파일 없음) 처리
+        if not all_files:
+            # URL 전용이거나 파일 없는 경우
+            direct_url = url_prop
+            if not direct_url:
+                print(f"  ⏭  {doc_name}: 실물 파일 없음 — 건너뜀")
+                skipped += 1
+            else:
+                print(f"  ⏭  {doc_name}: 링크 전용")
+                skipped += 1
+            continue
 
-        # 로컬 파일명 결정 (유효 확장자일 때만)
-        local_file = ""
-        if notion_fname and not is_external_url(notion_fname):
-            ext = Path(notion_fname).suffix.lower()
-            if ext in VALID_EXTENSIONS:
-                local_file = safe_filename(doc_name, notion_fname)
+        page_had_file = False
+        # ── 유효 파일 목록 수집 ────────────────────────────────────────
+        valid_files = []  # [(local_file, file_url), ...]
+        for notion_fname, file_url in all_files:
+            if is_external_url(file_url) or is_external_url(notion_fname):
+                continue  # 외부 URL 파일은 다운로드 불가 → 제외
+            ext = Path(notion_fname).suffix.lower() if notion_fname else ""
+            if ext not in VALID_EXTENSIONS:
+                continue
+            stem = Path(notion_fname).stem
+            clean_stem = re.sub(r'[\\/:*?"<>|]', "", stem).strip()
+            local_file = clean_stem + ext
+            valid_files.append((local_file, file_url))
 
-        # 실물 파일 없으면 건너뜀 (가이드, URL 전용 등)
-        if not local_file:
-            print(f"  ⏭  {doc_name}: 실물 파일 없음 — 건너뜀")
+        if not valid_files:
             skipped += 1
             continue
+
+        page_had_file = True
+        primary_local = valid_files[0][0]
+        all_local_files = [lf for lf, _ in valid_files]
 
         # ── 신규 문서 추가 ──────────────────────────────────────────
         if page_id not in existing_ids:
@@ -213,40 +243,35 @@ def sync_db(db_id: str, db_label: str, documents: list, existing_ids: dict) -> t
                 "aliases": make_aliases(raw_name),
                 "notion_url": notion_url,
                 "notion_page_id": page_id,
-                "local_file": local_file,
+                "local_file": primary_local,
+                "local_files": all_local_files,
                 "description": doc_name,
             }
             if direct_url:
                 new_doc["direct_url"] = direct_url
             documents.append(new_doc)
             existing_ids[page_id] = len(documents) - 1
-            print(f"  ➕ 신규: {doc_name}")
+            print(f"  ➕ 신규: {doc_name} ({len(valid_files)}개 파일)")
             added += 1
         else:
             idx = existing_ids[page_id]
             documents[idx]["notion_url"] = notion_url
-            if local_file:
-                documents[idx]["local_file"] = local_file
+            documents[idx]["local_file"] = primary_local
+            documents[idx]["local_files"] = all_local_files
             if direct_url:
                 documents[idx]["direct_url"] = direct_url
-            # aliases 갱신: 인코딩 오류 복구 및 신규 키워드 반영
             documents[idx]["aliases"] = make_aliases(raw_name)
 
         # ── 파일 다운로드 ───────────────────────────────────────────
-        if not file_url or not local_file:
-            if not file_url:
-                print(f"  ⏭  {doc_name}: 링크 전용")
-            skipped += 1
-            continue
-
-        save_path = FILES_DIR / local_file
-        try:
-            size_kb = download_file(file_url, save_path)
-            print(f"  ✅ {doc_name}: {local_file} ({size_kb}KB)")
-            updated += 1
-        except Exception as e:
-            print(f"  ❌ {doc_name}: 다운로드 실패 — {e}")
-            failed += 1
+        for local_file, file_url in valid_files:
+            save_path = FILES_DIR / local_file
+            try:
+                size_kb = download_file(file_url, save_path)
+                print(f"  ✅ {doc_name}: {local_file} ({size_kb}KB)")
+                updated += 1
+            except Exception as e:
+                print(f"  ❌ {doc_name}: {local_file} 다운로드 실패 — {e}")
+                failed += 1
 
     return added, updated, skipped, failed
 
@@ -291,7 +316,7 @@ def main():
     print(f"📝 documents.json 업데이트 완료 ({len(documents)}개 항목)")
     print("=" * 55)
 
-    notify_slack(len(documents), total_added, total_updated, total_failed)
+    # notify_slack 비활성화 (채널 알림 불필요)
 
 
 def notify_slack(doc_count: int, added: int, updated: int, failed: int):

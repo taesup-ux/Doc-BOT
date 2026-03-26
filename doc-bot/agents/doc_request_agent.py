@@ -116,10 +116,11 @@ def detect_document_requests(text: str) -> list[dict]:
     matched_indices = set()
 
     # 1단계: 사전 정규화된 별칭으로 매칭 (별칭 재정규화 없음)
+    # 정방향: alias ⊂ 사용자텍스트 / 역방향: 사용자텍스트(≥4자) ⊂ alias (복합어 부분 검색)
     for norm_alias, idx in _aliases_cache:
         if idx in matched_indices:
             continue
-        if norm_alias in lower_text:
+        if norm_alias in lower_text or (len(lower_text) >= 4 and lower_text in norm_alias):
             doc = documents[idx]
             matched.append({
                 "name": doc["name"],
@@ -255,41 +256,38 @@ def download_and_upload_url(client, channel: str, thread_ts: str, doc_info: dict
 
 
 def has_local_file(doc_info: dict) -> bool:
-    """로컬 캐시 파일이 존재하는지 확인. 인식 가능한 확장자만 허용."""
-    local_file = doc_info.get("local_file")
-    if not local_file:
-        return False
-    if Path(local_file).suffix.lower() not in VALID_DOC_EXTENSIONS:
-        return False
-    return (FILES_DIR / local_file).exists()
+    """로컬 캐시 파일이 존재하는지 확인. local_files 우선, 없으면 local_file."""
+    files = doc_info.get("local_files") or ([doc_info["local_file"]] if doc_info.get("local_file") else [])
+    return any(
+        Path(f).suffix.lower() in VALID_DOC_EXTENSIONS and (FILES_DIR / f).exists()
+        for f in files
+    )
 
 
 def upload_local_file(client, channel: str, thread_ts: str, doc_info: dict) -> bool:
     """
-    로컬 캐시 파일을 Slack에 업로드.
-    반환값: True(성공) / False(파일 없음 또는 실패)
+    로컬 캐시 파일을 Slack에 업로드. local_files에 여러 파일이 있으면 모두 전송.
+    반환값: True(1개 이상 성공) / False(파일 없음 또는 전체 실패)
     """
-    local_file = doc_info.get("local_file")
-    if not local_file:
+    files = doc_info.get("local_files") or ([doc_info["local_file"]] if doc_info.get("local_file") else [])
+    valid = [(FILES_DIR / f, f) for f in files if (FILES_DIR / f).exists()]
+    if not valid:
         return False
 
-    file_path = FILES_DIR / local_file
-    if not file_path.exists():
-        return False
-
-    try:
-        client.files_upload_v2(
-            channel=channel,
-            thread_ts=thread_ts,
-            file=str(file_path),
-            filename=local_file,
-            title=doc_info["name"],
-            initial_comment=f"📎 *{doc_info['name']}* 파일입니다.",
-        )
-        return True
-    except Exception as e:
-        logger.error(f"[upload_local_file] 파일 업로드 실패: {doc_info.get('name')}, {e}")
-        return False
+    success = False
+    for file_path, filename in valid:
+        try:
+            client.files_upload_v2(
+                channel=channel,
+                thread_ts=thread_ts,
+                file=str(file_path),
+                filename=filename,
+                title=doc_info["name"],
+            )
+            success = True
+        except Exception as e:
+            logger.error(f"[upload_local_file] 파일 업로드 실패: {filename}, {e}")
+    return success
 
 
 def build_reply(doc_info: dict, has_file: bool = False) -> str:
