@@ -10,7 +10,7 @@ load_dotenv()
 KST = ZoneInfo("Asia/Seoul")
 
 # ─── 채널 ID ─────────────────────────────────────────────────────────────────────
-HELPDESK_CHANNEL = os.environ["HELPDESK_CHANNEL"]
+DOC_CHANNEL = os.environ["HELPDESK_CHANNEL"]
 TEAM_CHANNEL = os.environ["TEAM_CHANNEL"]
 
 # ─── 근무 시간 ────────────────────────────────────────────────────────────────────
@@ -21,6 +21,6 @@ WORK_END = 19
 EXCLUDE_KEYWORDS = ["인감증명", "인감 도장", "인감확인", "인감 신청", "인감 발급"]
 
 # ─── 테스트 모드 ──────────────────────────────────────────────────────────────────
-# True : 팀 채널에 미리보기 카드 발송 (확인 후 헬프데스크 전송)
-# False: 헬프데스크에 즉시 응답
+# True : 팀 채널에 미리보기 카드 발송 (확인 후 샌드박스-문서자료실 전송)
+# False: 샌드박스-문서자료실에 즉시 응답
 TEST_MODE = os.environ.get("TEST_MODE", "true").lower() == "true"

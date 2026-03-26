@@ -1,6 +1,6 @@
 # Sandbox Doc Bot - 문서 요청 자동 안내 봇
 #
-# 목적: Slack 헬프데스크 채널에서 문서/서류 요청 키워드를 감지,
+# 목적: Slack 샌드박스-문서자료실 채널에서 문서/서류 요청 키워드를 감지,
 #       Notion 자료실 링크 또는 로컬 파일을 스레드로 바로 전송.
 #
 # Claude API 없음 → 순수 키워드 매칭으로 작동 (빠르고 가벼움)
@@ -9,7 +9,7 @@
 # 전제 조건:
 #   1. api.slack.com/apps 에서 Doc Bot 앱 생성
 #   2. .env에 DOC_BOT_TOKEN, SLACK_SIGNING_SECRET 입력
-#   3. 헬프데스크 채널에 봇 초대: /invite @Sandbox Doc Bot
+#   3. 샌드박스-문서자료실 채널에 봇 초대: /invite @Sandbox Doc Bot
 #   4. python refresh_docs.py 실행 → 로컬 파일 캐시 생성 (선택)
 
 import logging
@@ -33,7 +33,7 @@ logging.basicConfig(
 load_dotenv()
 
 from config import (
-    HELPDESK_CHANNEL,
+    DOC_CHANNEL,
     WORK_START, WORK_END, KST,
     EXCLUDE_KEYWORDS,
 )
@@ -72,8 +72,8 @@ def handle_message(event, client, logger):
         return
     channel = message.get("channel")
 
-    # 헬프데스크 채널만 이하 처리 ────────────────────────────────────────────────────
-    if channel != HELPDESK_CHANNEL:
+    # 샌드박스-문서자료실 채널만 이하 처리 ────────────────────────────────────────────────────
+    if channel != DOC_CHANNEL:
         return
 
     # 봇·시스템 메시지 제외
@@ -108,7 +108,7 @@ def handle_message(event, client, logger):
     # 감지 → 안내 메시지
     try:
         client.chat_postMessage(
-            channel=HELPDESK_CHANNEL,
+            channel=DOC_CHANNEL,
             thread_ts=thread_ts,
             text="요청 수신했습니다! 서류 찾아드릴게요 🔍",
         )
@@ -123,14 +123,14 @@ def handle_message(event, client, logger):
 
         try:
             client.chat_postMessage(
-                channel=HELPDESK_CHANNEL,
+                channel=DOC_CHANNEL,
                 thread_ts=thread_ts,
                 text=reply_text,
             )
             if has_file:
-                doc_request.upload_local_file(client, HELPDESK_CHANNEL, thread_ts, doc_info)
+                doc_request.upload_local_file(client, DOC_CHANNEL, thread_ts, doc_info)
             elif can_download:
-                doc_request.download_and_upload_url(client, HELPDESK_CHANNEL, thread_ts, doc_info)
+                doc_request.download_and_upload_url(client, DOC_CHANNEL, thread_ts, doc_info)
             logger.info(f"[doc_request] 응답 완료: {doc_info['name']}, ts={ts}")
         except Exception as e:
             logger.error(f"[doc_request] 실패: {e}")
@@ -170,17 +170,17 @@ def startup_check() -> bool:
     r2 = requests.post(
         "https://slack.com/api/conversations.info",
         headers=h,
-        data={"channel": HELPDESK_CHANNEL},
+        data={"channel": DOC_CHANNEL},
         timeout=10,
     )
     d2 = r2.json()
     if d2.get("ok") or d2.get("error") in ("missing_scope",):
-        print(f"  ✅ 채널   : {HELPDESK_CHANNEL}")
+        print(f"  ✅ 채널   : {DOC_CHANNEL}")
     elif d2.get("error") == "channel_not_found":
-        print(f"  ❌ 채널 없음: {HELPDESK_CHANNEL}")
+        print(f"  ❌ 채널 없음: {DOC_CHANNEL}")
         ok = False
     else:
-        print(f"  ⚠️ 채널   : {HELPDESK_CHANNEL} ({d2.get('error','ok')})")
+        print(f"  ⚠️ 채널   : {DOC_CHANNEL} ({d2.get('error','ok')})")
 
     # 4. 로컬 파일 캐시 확인
     files_dir = Path(__file__).parent / "knowledge" / "files"
@@ -208,7 +208,7 @@ if __name__ == "__main__":
 
     print("=" * 50)
     print("Sandbox Doc Bot 시작")
-    print(f"  헬프데스크 채널: {HELPDESK_CHANNEL}")
+    print(f"  샌드박스-문서자료실 채널: {DOC_CHANNEL}")
     print(f"  포트: {port}")
     print("  모드: HTTP / 키워드 감지 → 스레드 즉시 응답 + 파일 전송")
     print("=" * 50)
