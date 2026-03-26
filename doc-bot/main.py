@@ -112,8 +112,8 @@ def handle_message(event, client, logger):
             thread_ts=thread_ts,
             text="요청 수신했습니다! 서류 찾아드릴게요 🔍",
         )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning(f"[doc_request] 수신 확인 메시지 전송 실패 (계속 진행): {e}")
 
     for doc_info in doc_list:
         is_group = doc_info.get("is_group", False)
@@ -139,7 +139,6 @@ def handle_message(event, client, logger):
 # ─── 시작 상태 점검 ────────────────────────────────────────────────────────────────
 def startup_check() -> bool:
     """앱 시작 전 필수 상태 점검. 실패 시 False 반환."""
-    import requests
     from pathlib import Path
 
     token = os.environ.get("DOC_BOT_TOKEN", "")

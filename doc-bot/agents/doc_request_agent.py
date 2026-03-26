@@ -96,8 +96,8 @@ def _load_documents() -> list:
                 for i, doc in enumerate(_documents_cache)
                 for alias in doc.get("aliases", [])
             ]
-    except (OSError, json.JSONDecodeError):
-        pass
+    except (OSError, json.JSONDecodeError) as e:
+        logger.error(f"[doc_request] documents.json 로드 실패: {e}")
     return _documents_cache
 
 
@@ -124,6 +124,7 @@ def detect_document_requests(text: str) -> list[dict]:
                 "notion_url_2": doc.get("notion_url_2", ""),
                 "description": doc.get("description", ""),
                 "local_file": doc.get("local_file", ""),
+                "local_files": doc.get("local_files", []),
                 "is_group": doc.get("is_group", False),
                 "direct_url": doc.get("direct_url", ""),
             })
@@ -251,12 +252,17 @@ def download_and_upload_url(client, channel: str, thread_ts: str, doc_info: dict
         return False
 
 
+def _safe_local_files(doc_info: dict) -> list[str]:
+    """local_files 목록 반환. path traversal 방어 (파일명만 사용)."""
+    files = doc_info.get("local_files") or ([doc_info["local_file"]] if doc_info.get("local_file") else [])
+    return [Path(f).name for f in files if f]
+
+
 def has_local_file(doc_info: dict) -> bool:
     """로컬 캐시 파일이 존재하는지 확인. local_files 우선, 없으면 local_file."""
-    files = doc_info.get("local_files") or ([doc_info["local_file"]] if doc_info.get("local_file") else [])
     return any(
         Path(f).suffix.lower() in VALID_DOC_EXTENSIONS and (FILES_DIR / f).exists()
-        for f in files
+        for f in _safe_local_files(doc_info)
     )
 
 
@@ -265,8 +271,7 @@ def upload_local_file(client, channel: str, thread_ts: str, doc_info: dict) -> b
     로컬 캐시 파일을 Slack에 업로드. local_files에 여러 파일이 있으면 모두 전송.
     반환값: True(1개 이상 성공) / False(파일 없음 또는 전체 실패)
     """
-    files = doc_info.get("local_files") or ([doc_info["local_file"]] if doc_info.get("local_file") else [])
-    valid = [(FILES_DIR / f, f) for f in files if (FILES_DIR / f).exists()]
+    valid = [(FILES_DIR / f, f) for f in _safe_local_files(doc_info) if (FILES_DIR / f).exists()]
     if not valid:
         return False
 

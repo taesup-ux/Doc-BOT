@@ -82,11 +82,14 @@ def get_all_file_infos(props: dict) -> list[tuple[str, str]]:
     result = []
     for f in files:
         name = f.get("name", "")
-        if f["type"] == "file":
-            url = f["file"]["url"]
-        elif f["type"] == "external":
-            url = f["external"]["url"]
+        ftype = f.get("type", "")
+        if ftype == "file":
+            url = f.get("file", {}).get("url", "")
+        elif ftype == "external":
+            url = f.get("external", {}).get("url", "")
         else:
+            continue
+        if not url:
             continue
         result.append((name, url))
     return result
@@ -286,12 +289,15 @@ def main():
     else:
         documents = []
 
-    # 실물 파일 없는 기존 항목 정리
+    # 실물 파일 없는 기존 항목 정리 (is_group, direct_url 전용 수동 항목은 보존)
     before = len(documents)
-    documents = [d for d in documents if d.get("local_file")]
+    documents = [
+        d for d in documents
+        if d.get("local_file") or d.get("is_group") or d.get("direct_url")
+    ]
     existing_ids = {doc.get("notion_page_id", ""): i for i, doc in enumerate(documents)}
     if before != len(documents):
-        print(f"[정리] URL 전용 기존 항목 {before - len(documents)}개 제거")
+        print(f"[정리] 불필요 기존 항목 {before - len(documents)}개 제거")
 
     print("=" * 55)
     print("Notion DB 동기화 시작")
