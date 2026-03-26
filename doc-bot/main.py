@@ -197,30 +197,6 @@ def startup_check() -> bool:
     if not ok:
         print("  ???�태?��? ?�패 ??????�� ?�인 ???�시?�하?�요")
 
-    # Slack???�시???�태 ?�림
-    now_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
-    if ok:
-        slack_msg = (
-            f"?�� *Sandbox Doc Bot ?�시???�료* ({now_str})\n"
-            f"???�큰: ?? ?�코?? ?? 채널: ??n"
-            f"??문서: {doc_count}�?/ 캐시 ?�일: {file_count}�?n"
-            f"???�태: ?�상 ???�워??감�? ?��?�?
-        )
-    else:
-        slack_msg = (
-            f"?�� *Sandbox Doc Bot ?�시???�패* ({now_str})\n"
-            f"???�태?��? ?�류 ??봇이 ?�작?��? ?�았?�니?? ?�정???�인?�주?�요."
-        )
-    try:
-        requests.post(
-            "https://slack.com/api/chat.postMessage",
-            headers={**h, "Content-Type": "application/json"},
-            json={"channel": HELPDESK_CHANNEL, "text": slack_msg},
-            timeout=10,
-        )
-    except Exception:
-        pass
-
     return ok
 
 
