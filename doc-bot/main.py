@@ -17,7 +17,6 @@ import os
 import re
 import sys
 from collections import OrderedDict
-from datetime import datetime
 
 import requests
 from dotenv import load_dotenv
@@ -34,7 +33,6 @@ load_dotenv()
 
 from config import (
     DOC_CHANNEL,
-    WORK_START, WORK_END, KST,
     EXCLUDE_KEYWORDS,
 )
 import agents.doc_request_agent as doc_request
@@ -51,11 +49,6 @@ _PROCESSED_MAX = 1000
 
 
 # ─── 유틸 함수 ────────────────────────────────────────────────────────────────────
-def is_work_hours() -> bool:
-    now = datetime.now(KST)
-    return WORK_START <= now.hour < WORK_END
-
-
 def _is_excluded(text: str) -> bool:
     """인감 등 물리 인감 요청 → 봇 처리 제외."""
     return any(kw in text for kw in EXCLUDE_KEYWORDS)
@@ -95,9 +88,6 @@ def handle_message(event, client, logger):
 
     if _is_excluded(text):
         logger.info(f"[filter] 제외 키워드 감지, 스킵: ts={ts}")
-        return
-
-    if not is_work_hours():
         return
 
     # 문서 요청 감지 (다중) ────────────────────────────────────────────────────────
