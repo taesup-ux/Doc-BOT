@@ -7,7 +7,7 @@ Railway 단일 프로젝트에서 서비스별로 독립 배포.
 
 | 서비스 | 폴더 | 상태 | 설명 |
 |--------|------|------|------|
-| Doc Bot | `doc-bot/` | 🟢 운영 중 | 헬프데스크 문서 요청 자동 안내 |
+| Doc Bot | `doc-bot/` | 🟢 운영 중 | 샌드박스-문서자료실 문서 요청 자동 안내 |
 | Helpdesk Bot | `helpdesk-bot/` | 🔜 예정 | - |
 | GA Automation Bot | `ga-bot/` | 🔜 예정 | - |
 
